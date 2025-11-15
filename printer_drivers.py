@@ -1,23 +1,24 @@
 import win32print
 
-PRINTER_NAME = "POS-58 Printer"   # <- Change to printer name as stated in device manager
+PRINTER_NAME = r"POS-58 Printer"  # <- replace with printers name in device manager
 
 def print_text(text: str):
+    print(f"Opening printer.")
     hPrinter = win32print.OpenPrinter(PRINTER_NAME)
 
     try:
-        win32print.StartDocPrinter(
-            hPrinter,
-            1,
-            ("Python print_text", None, "RAW")
-        )
+        doc_info = ("Python POS Test", None, "RAW")
+        win32print.StartDocPrinter(hPrinter, 1, doc_info)
         win32print.StartPagePrinter(hPrinter)
 
-        data = text.encode("cp437", errors="replace")
+        payload = text + "\n\n\n"
+        data = payload.encode("cp437", errors="replace")
+
         win32print.WritePrinter(hPrinter, data)
 
         win32print.EndPagePrinter(hPrinter)
         win32print.EndDocPrinter(hPrinter)
+        print("Done sending to printer.")
     finally:
         win32print.ClosePrinter(hPrinter)
 
