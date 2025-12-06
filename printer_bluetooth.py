@@ -27,8 +27,13 @@ def send_to_printer(data: bytes):
         ser.flush()      
         
         # Printer needs delay or it wont work all the time...
-        time.sleep(0.3) 
+        time.sleep(0.3)
+
+# Convert string to bytes
+def print_text(text: str):
+    payload = text + "\n\n\n\n" 
+    data = payload.encode("cp437", errors="replace")
+    send_to_printer(data)
 
 if __name__ == "__main__":
-    # Have to send bytes.
-    send_to_printer(b"\n\nHello\n\n")
+    print_text("Hello")
