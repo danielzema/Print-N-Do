@@ -1,4 +1,5 @@
 import time
+import quotes
 
 MAX_WIDTH = 30
 MAX_TEXT_SPACE = MAX_WIDTH - 2 
@@ -21,11 +22,17 @@ def padded_text_left(text, bold=False):
     return ("\n".join(result), text if bold else None)
 
 def padded_text_middle(text, bold=False):
-    total_padding = MAX_WIDTH - len(text)
-    left_padding = total_padding // 2
-    right_padding = total_padding - left_padding
-    formatted = "|" + " " * left_padding + text + " " * right_padding + "|"
-    return (formatted, text if bold else None)
+    lines = wrap_text(text)
+    result = []
+    for line in lines:
+        if len(line) > MAX_TEXT_SPACE:
+            result.append("| " + line[:MAX_TEXT_SPACE] + " |")
+        else:
+            total_padding = MAX_TEXT_SPACE - len(line)
+            left_padding = total_padding // 2
+            right_padding = total_padding - left_padding
+            result.append("| " + " " * left_padding + line + " " * right_padding + " |")
+    return ("\n".join(result), text if bold else None)
 
 # TODO Add error handling for text longer than MAX_WIDTH
 def wrap_text(text):
@@ -47,20 +54,18 @@ def wrap_text(text):
     
     return lines
 
-def format_single_task_header():
+def format_reciept_header():
     lines = []
     lines.append(top_bottom_border())
-    
-    motivation_line, bold_word = padded_text_middle("MOTIVATION", bold=True)
+    quote = quotes.get_random_quote()
+    motivation_line, bold_word = padded_text_middle(quote, bold=True)
     lines.append(motivation_line)
-    
     lines.append(empty_line())
     date_line, _ = padded_text_left("Date: " + time.strftime("%A, " +"%d-%m-%Y"))
     lines.append(date_line)
     time_line, _ = padded_text_left("Time: " + time.strftime("%H:%M"))
     lines.append(time_line)
     lines.append(empty_line())
-
     full_text = "\n".join(lines)
     return (full_text, bold_word)
 
@@ -71,7 +76,6 @@ def format_single_task_body():
     separator_line, _ = padded_text_left(len("Task information") * "-")
     lines.append(separator_line)
     lines.append(empty_line())
-    
     title_line, _ = padded_text_left("Lecture 25")
     lines.append(title_line)
     lines.append(empty_line())
@@ -92,17 +96,16 @@ def format_single_task_footer():
     lines.append(footer_line)
     lines.append(empty_line())
     lines.append(top_bottom_border())
- 
     full_text = "\n".join(lines)
     return (full_text, bold_word)
 
 def format_single_task():
-    header_text, header_bold = format_single_task_header()
+    header_text, header_bold = format_reciept_header()
     body_text, body_bold = format_single_task_body()
     footer_text, footer_bold = format_single_task_footer()
     
     full_text = header_text + "\n" + body_text + "\n" + footer_text
-    # List comprehension
+    # List comprehension to sort for bold words
     bold_words = [word for word in [header_bold, body_bold, footer_bold] if word]
     
     return (full_text, bold_words)
