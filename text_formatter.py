@@ -110,6 +110,35 @@ def format_single_task_body():
     full_text = "\n".join(lines)
     return (full_text, bold_word)
 
+def format_single_task_body_user_input(Title: str = None, Comments: str | None = None, Duedate: str = None):
+    # Ask for user input if not provided
+    if Title is None:
+        print("Print a task...")
+        Title = input("Title: ")
+    if Comments is None:
+        Comments = input("Comments: ")
+    if Duedate is None:
+        Duedate = input("Due: ")
+    
+    lines = []
+    task_line, bold_word = padded_text_left("Task information", bold=True)
+    lines.append(task_line)
+    separator_line, _ = padded_text_left(len("Task information") * "-")
+    lines.append(separator_line)
+    lines.append(empty_line())
+    title_line, _ = padded_text_left(Title)
+    lines.append(title_line)
+    lines.append(empty_line())
+    if Comments:
+        desc_line, _ = padded_text_left(Comments)
+        lines.append(desc_line)
+        lines.append(empty_line())
+    due_line, _ = padded_text_left("Due: " + Duedate)
+    lines.append(due_line)
+    lines.append(empty_line())
+    full_text = "\n".join(lines)
+    return (full_text, bold_word)
+
 def format_single_task_footer(): 
     lines = []
     lines.append(top_bottom_border())
@@ -127,7 +156,6 @@ def format_single_task():
     footer_text, footer_bold = format_single_task_footer()
     
     full_text = header_text + "\n" + body_text + "\n" + footer_text
-    # Collect all bold words - header_bold is now a list
     bold_words = []
     if isinstance(header_bold, list):
         bold_words.extend(header_bold)
