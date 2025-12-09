@@ -26,7 +26,7 @@ def padded_text_middle(text, bold=False):
     result = []
     for line in lines:
         if len(line) > MAX_TEXT_SPACE:
-            result.append("| " + line[:MAX_TEXT_SPACE] + " |")
+            result.append("| " + line[:MAX_TEXT_SPACE - 1] + " |")
         else:
             total_padding = MAX_TEXT_SPACE - len(line)
             left_padding = total_padding // 2
@@ -54,11 +54,33 @@ def wrap_text(text):
     
     return lines
 
+def format_reciept_header_quote():
+    lines = []
+    lines.append(top_bottom_border())
+    lines.append(empty_line())
+    reciept, bold_reciept = padded_text_middle("TASK RECIEPT", bold=True)
+    lines.append(reciept)
+    line, _ = padded_text_middle(len("TASK RECIEPT") * "-")
+    lines.append(line)
+    lines.append(empty_line())
+    quote = quotes.get_random_quote()
+    motivation_line, bold_quote = padded_text_middle(quote, bold=True)
+    lines.append(motivation_line)
+    lines.append(empty_line())
+    date_line, _ = padded_text_left("Date: " + time.strftime("%A, " +"%d-%m-%Y"))
+    lines.append(date_line)
+    time_line, _ = padded_text_left("Time: " + time.strftime("%H:%M"))
+    lines.append(time_line)
+    lines.append(empty_line())
+    full_text = "\n".join(lines)
+    # Return list of both bold words
+    bold_words = [bw for bw in [bold_reciept, bold_quote] if bw]
+    return (full_text, bold_words)
+
 def format_reciept_header():
     lines = []
     lines.append(top_bottom_border())
-    quote = quotes.get_random_quote()
-    motivation_line, bold_word = padded_text_middle(quote, bold=True)
+    motivation_line, bold_word = padded_text_middle("TASK RECIEPT", bold=True)
     lines.append(motivation_line)
     lines.append(empty_line())
     date_line, _ = padded_text_left("Date: " + time.strftime("%A, " +"%d-%m-%Y"))
@@ -79,10 +101,10 @@ def format_single_task_body():
     title_line, _ = padded_text_left("Lecture 25")
     lines.append(title_line)
     lines.append(empty_line())
-    desc_line, _ = padded_text_left("Description: bla bla blab alblabalbalba balab ablabalab f fffe")
+    desc_line, _ = padded_text_left("Don't forget to send mail to Daniel before the lecture")
     lines.append(desc_line)
     lines.append(empty_line())
-    due_line, _ = padded_text_left("Due: Tuesday 12-12/2025 at 19:25")
+    due_line, _ = padded_text_left("Due Tuesday 12-12/2025 at 19:25")
     lines.append(due_line)
     lines.append(empty_line())
     full_text = "\n".join(lines)
@@ -92,7 +114,7 @@ def format_single_task_footer():
     lines = []
     lines.append(top_bottom_border())
     lines.append(empty_line())
-    footer_line, bold_word = padded_text_left("Check when completed: " + "[ ]")
+    footer_line, bold_word = padded_text_left("Check when completed: " + "[ ]", bold=True)
     lines.append(footer_line)
     lines.append(empty_line())
     lines.append(top_bottom_border())
@@ -100,13 +122,21 @@ def format_single_task_footer():
     return (full_text, bold_word)
 
 def format_single_task():
-    header_text, header_bold = format_reciept_header()
+    header_text, header_bold = format_reciept_header_quote()
     body_text, body_bold = format_single_task_body()
     footer_text, footer_bold = format_single_task_footer()
     
     full_text = header_text + "\n" + body_text + "\n" + footer_text
-    # List comprehension to sort for bold words
-    bold_words = [word for word in [header_bold, body_bold, footer_bold] if word]
+    # Collect all bold words - header_bold is now a list
+    bold_words = []
+    if isinstance(header_bold, list):
+        bold_words.extend(header_bold)
+    elif header_bold:
+        bold_words.append(header_bold)
+    if body_bold:
+        bold_words.append(body_bold)
+    if footer_bold:
+        bold_words.append(footer_bold)
     
     return (full_text, bold_words)
 
