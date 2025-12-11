@@ -1,5 +1,6 @@
 import time
 import quotes
+import google_calendar
 
 MAX_WIDTH = 30
 MAX_TEXT_SPACE = MAX_WIDTH - 2 
@@ -91,20 +92,20 @@ def format_reciept_header():
     full_text = "\n".join(lines)
     return (full_text, bold_word)
 
-def format_single_task_body():
+def format_single_task_body_google_calendar(title: str, description: str, due_date: str):
     lines = []
     task_line, bold_word = padded_text_left("Task information", bold=True)
     lines.append(task_line)
     separator_line, _ = padded_text_left(len("Task information") * "-")
     lines.append(separator_line)
     lines.append(empty_line())
-    title_line, _ = padded_text_left("Lecture 25")
+    title_line, _ = padded_text_left(title)
     lines.append(title_line)
     lines.append(empty_line())
-    desc_line, _ = padded_text_left("Don't forget to send mail to Daniel before the lecture")
+    desc_line, _ = padded_text_left(description)
     lines.append(desc_line)
     lines.append(empty_line())
-    due_line, _ = padded_text_left("Due Tuesday 12-12/2025 at 19:25")
+    due_line, _ = padded_text_left(due_date)
     lines.append(due_line)
     lines.append(empty_line())
     full_text = "\n".join(lines)
